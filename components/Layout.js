@@ -2,11 +2,14 @@
 
 import React from 'react';
 
-type
-LayoutProps = {};
+type LayoutProps = {
+    children: React.Element<*>
+};
 
 const Layout = (props: LayoutProps) => (
-    null
+    <div>
+        {props.children}
+    </div>
 );
 
 export default Layout;

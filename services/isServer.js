@@ -1,3 +1,1 @@
-/**
- * Created by Jari on 09/07/2017.
- */
+export default typeof window === 'undefined';
