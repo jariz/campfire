@@ -2,7 +2,6 @@
 
 import throwIfNotOK from '../services/throwIfNotOK';
 import { createRoomUrl } from '../constants/apiUrls';
-import { setProfile } from './user';
 import { setError } from './error';
 // state def
 export type IArtist = {
@@ -64,15 +63,18 @@ export const setRoom = (room: RoomState): SetRoomAction => ({
 export const createRoom = (token: string) => async dispatch => {
     try {
         const resp = await fetch(createRoomUrl(), {
+            method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`
-            } 
+            }
         });
         throwIfNotOK(resp);
         const body = await resp.json();
-        dispatch(setProfile(body));
+        // dispatch(setRoom(body));
+        return body;
     }
     catch(ex) {
         dispatch(setError(ex));
+        throw ex;
     }
 };

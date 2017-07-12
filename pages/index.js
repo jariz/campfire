@@ -5,15 +5,20 @@ import Layout from '../components/Layout';
 import { authUrl } from '../constants/apiUrls';
 import withRedux from 'next-redux-wrapper';
 import createStore from '../createStore';
-import type { getProfile, UserState } from '../redux/user';
+import { getProfile } from '../redux/user';
+import type { UserState } from '../redux/user';
 import { setToken } from '../redux/user';
 import isServer from '../services/isServer';
-import { createRoom } from '../redux/room';
+import { createRoom, RoomState } from '../redux/room';
 
 type HomeProps = {
     user: UserState,
+    room: RoomState,
     dispatch: (action: any) => void,
-    setToken: (token: string) => void
+    setToken: (token: string) => void,
+    url: {
+        push: (url: string) => void
+    }
 };
 
 const startAuth = () => {
@@ -28,7 +33,7 @@ class Home extends Component {
     }
     
     componentWillUnmount() {
-        // !isServer() && window.removeEventListener('tokenReceived', this.onToken);
+        !isServer && window.removeEventListener('tokenReceived', this.onToken);
     }
     
     onToken = async () => {
@@ -36,8 +41,9 @@ class Home extends Component {
         const { token } = window;
         this.props.dispatch(setToken(token));
 
-        this.props.dispatch(getProfile(token));
-        this.props.dispatch(createRoom(token));
+        await this.props.dispatch(getProfile(token));
+        const roomInfo = await this.props.dispatch(createRoom(token));
+        this.props.url.push('/' + roomInfo.id);
     }
     
     render() {
@@ -51,4 +57,4 @@ class Home extends Component {
     }
 }
 
-export default withRedux(createStore, ({ user }) => ({ user }))(Home);
+export default withRedux(createStore, ({ user, room }) => ({ user, room }))(Home);

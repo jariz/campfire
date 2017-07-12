@@ -6,9 +6,8 @@ import { roomUrl } from '../constants/apiUrls';
 import throwIfNotOK from '../services/throwIfNotOK';
 
 class Room extends Component {
-    static async getInitialProps({store, req}) {
-        // console.log(Object.keys(breh));
-        const resp = await fetch(roomUrl(req.params.roomName));
+    static async getInitialProps({store, pathname}) {
+        const resp = await fetch(roomUrl(pathname.substring(1)));
         throwIfNotOK(resp);
         const body = await resp.json();
         store.dispatch({

@@ -87,5 +87,6 @@ export const getProfile = (token: string) => async (dispatch) => {
     }
     catch(ex) {
         dispatch(setError(ex));
+        throw ex;
     }
 };
