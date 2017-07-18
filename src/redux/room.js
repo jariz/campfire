@@ -1,7 +1,7 @@
 // @flow
 
 import throwIfNotOK from '../services/throwIfNotOK';
-import { createRoomUrl, roomUrl, topUrl } from '../constants/apiUrls';
+import { createRoomUrl, queueUrl, roomUrl, topUrl } from '../constants/apiUrls';
 import { setError } from './error';
 import decode from 'jwt-decode';
 import chance from 'chance';
@@ -28,11 +28,16 @@ export type ITrack = {
 export type RoomState = {
     id: string,
     queue: ITrack[],
-    activeTrack: ITrack,
+    activeTrack: ?ITrack,
     loaded: false
 };
 
-const defaultState: RoomState = {};
+const defaultState: RoomState = {
+    id: '',
+    queue: [],
+    activeTrack: null,
+    loaded: false
+};
 
 export type Action = SetRoomAction;
 
@@ -48,7 +53,8 @@ export default (state: RoomState = defaultState, action: Action) => {
         case 'SET_ROOM':
             return {
                 ...state,
-                ...action.payload
+                ...action.payload,
+                loaded: true
             };
         default:
             return state;
@@ -61,7 +67,7 @@ export const setRoom = (room: RoomState): SetRoomAction => ({
     payload: room
 });
 
-export const createRoom = (token: string) => async dispatch => {
+export const createRoom = (token: string) => async (dispatch: Function) => {
     try {
         const resp = await fetch(createRoomUrl(), {
             method: 'POST',
@@ -78,7 +84,7 @@ export const createRoom = (token: string) => async dispatch => {
     }
 };
 
-export const getRoom = (token: string, room: string) => async dispatch => {
+export const getRoom = (token: string, room: string) => async (dispatch: Function) => {
     try {
         const resp = await fetch(roomUrl(room), {
             headers: {
@@ -96,14 +102,23 @@ export const getRoom = (token: string, room: string) => async dispatch => {
     }
 };
 
-export const queueTrack = (token: string) => async dispatch => {
-    
+export const queueTrack = (token: string, track: ITrack) => async (dispatch: Function) => {
+    const resp = await fetch(queueUrl(), {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        method: 'POST',
+        body: JSON.stringify(track)
+    });
+    throwIfNotOK(resp);
+    // gr8 success
 };
 
 /**
  * Looks for user's top tracks and queues one at random
  */
-export const queueRecommendedTrack = (token: string) => async dispatch => {
+export const queueRecommendedTrack = (token: string, roomId: string) => async (dispatch: Function) => {
     try {
         const { accessToken } = decode(token);
         const resp = await fetch(topUrl(), {
@@ -115,7 +130,16 @@ export const queueRecommendedTrack = (token: string) => async dispatch => {
         
         const body = await resp.json();
         const number = chance().integer({min: 0, max: body.items.length});
-        console.log(body.items[number])
+        const track = body.items[number];
+        const trackNormalized: ITrack = {
+            name: track.name,
+            artists: track.artists.map(({ id, name }) => ({ id, name })),
+            images: track.album.images,
+            durationMs: track.duration_ms,
+            spotifyId: track.id,
+            roomId
+        };
+        await dispatch(queueTrack(token, trackNormalized));
         return body;
     }
     catch(ex) {

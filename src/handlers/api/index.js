@@ -1,35 +1,20 @@
 import { Router } from 'express';
 import me from './me';
 import refresh from './refresh';
-import { parse } from 'auth-header';
-import jwt from 'jsonwebtoken';
-import { post as postRoom, get as getRoom} from './room';
+import { post as postRoom, get as getRoom } from './room';
+import queue from './queue';
+import authMiddleware from '../../authMiddleware';
 
 const router = Router();
 
+router.post('/room/queue', authMiddleware, queue);
 router.get('/room/:roomName', getRoom);
 
-// all calls are authenticated
-router.use('/', async (req, res, next) => {
-    try {
-        const { scheme, token } = parse(req.get('authorization'));
-        let tokenData;
-        if(scheme === 'Bearer') {
-            tokenData = jwt.verify(token, process.env.RAZZLE_CAMPFIRE_JWT_SECRET);
-        } else {
-            throw new Error('Invalid authorization scheme');
-        }
-        req.tokenData = tokenData;
-        next();
-    }
-    catch(ex) {
-        next(ex);
-    }
-});
+// all calls are authenticated from now on
+router.use(authMiddleware);
 
 router.get('/me', me);
 router.get('/refresh', refresh);
 router.post('/room', postRoom);
-router.post('/room/queue', postRoom);
 
 export default router;

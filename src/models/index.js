@@ -12,6 +12,7 @@ export const Track = thinky.createModel('Tracks', {
         width: type.number(),
         url: type.string()
     }],
+    spotifyId: type.string(),
     name: type.string(),
     durationMs: type.number()
 });

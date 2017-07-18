@@ -13,7 +13,7 @@ import 'universal-fetch';
 import createStore from './createStore';
 import morgan from 'morgan';
 import serialize from 'serialize-javascript';
-import { isUrl } from 'validator';
+import { isURL } from 'validator';
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 const dev = process.env.NODE_ENV !== 'production';
@@ -26,13 +26,13 @@ router.use(bodyParser.json());
 router.use(expressValidator({
     customValidators: {
         isArray: value => Array.isArray(value),
-        isValidArtistsArray: (values) => values.every(value => typeof value.id === 'string' && typeof value.name === 'string'),
+        isValidArtistsArray: (values) => !!values && values.every(value => typeof value.id === 'string' && typeof value.name === 'string'),
         isValidImagesArray: (values) =>
-            values.every(value => (
+            !!values && values.every(value => (
                 typeof value.height === 'number'
                 && typeof value.width === 'number'
                 && typeof value.url === 'string' &&
-                isUrl(value.url, {
+                isURL(value.url, {
                     host_whitelist: ['i.scdn.co'],
                     protocols: ['https']
                 })

@@ -29,9 +29,14 @@ class Room extends Component {
     
     componentDidMount() {
         if(!isServer) {
-            this.props.queueRecommendedTrack(this.props.token);
+            this.props.queueRecommendedTrack(this.props.token, this.props.match.params.room);
         }
     }
 }
 
-export default connect(({ room, user: { token } }) => ({ room, token }), dispatch => ({ queueRecommendedTrack: (token: string) => dispatch(queueRecommendedTrack(token)) }))(Room);
+export default connect(({ room, user: { token } }) => ({
+    room,
+    token
+}), dispatch => ({
+    queueRecommendedTrack: (token: string, roomId: string) => dispatch(queueRecommendedTrack(token, roomId)) 
+}))(Room);

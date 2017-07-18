@@ -4,17 +4,17 @@ import pascalcase from 'uppercamelcase';
 
 export const post = async (req, res, next) => {
     // simply creates a new room.
-    // client side is responsible for queueing the first track based on user's recommendations (and controlling playback)
+    // client side is responsible for queueing the first track based on user's recommendations (and controlling playback ofc)
     try {
         const room = new Room({
             id: pascalcase(moniker.choose()),
             ownerId: req.tokenData.userId
         });
-        
-        const roomDoc = await room.saveAll({owner: true});
+
+        const roomDoc = await room.saveAll({ owner: true });
         res.send(roomDoc);
     }
-    catch(ex) {
+    catch (ex) {
         next(ex);
     }
 };
@@ -23,11 +23,14 @@ export const get = async (req, res, next) => {
     try {
         const room = await Room
             .get(req.params.roomName)
-            .getJoin({ owner: { _apply: sequence => sequence.pluck(['displayName', 'image', 'id']) } });
-        
+            .getJoin({ 
+                owner: { _apply: sequence => sequence.pluck(['displayName', 'image', 'id']) },
+                queue: true
+            });
+
         res.send(room);
     }
-    catch(ex) {
+    catch (ex) {
         next(ex);
     }
 };

@@ -12,3 +12,4 @@ export const profileUrl = () => `${SPOTIFY_BASE_URL}/v1/me`;
 export const roomUrl = (room) => `${CAMPFIRE_BASE_URL}/api/room/${room}`;
 export const createRoomUrl = () => `${CAMPFIRE_BASE_URL}/api/room`;
 export const meUrl = () => `${CAMPFIRE_BASE_URL}/api/me`;
+export const queueUrl = () => `${CAMPFIRE_BASE_URL}/api/room/queue`;

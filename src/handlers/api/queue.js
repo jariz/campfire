@@ -1,10 +1,13 @@
+import { Track, Room } from '../../models/index';
+
 export default async (req, res, next) => {
     try {
-        req.checkBody('roomId', 'Invalid room ID').isAlpha();
-        req.checkBody('artists', 'Invalid artists').isValidArtistsArray();
-        req.checkBody('images', 'Invalid images').isValidImagesArray();
+        req.checkBody('roomId', 'Invalid room ID').notEmpty().isAlpha();
+        req.checkBody('artists', 'Invalid artists').isArray().isValidArtistsArray();
+        req.checkBody('images', 'Invalid images').isArray().isValidImagesArray();
         req.checkBody('name', 'Invalid name').notEmpty();
-        req.checkBody('durationMs', 'Invalid duration').isInt();
+        req.checkBody('durationMs', 'Invalid duration').notEmpty().isInt();
+        req.checkBody('spotifyId', 'spotifyID missing').isAlphanumeric().notEmpty();
 
         const validation = await req.getValidationResult();
 
@@ -15,8 +18,14 @@ export default async (req, res, next) => {
             return;
         }
         
-        // do thangs
-
+        // this will just crash if the room doesn't exist.
+        // 🙅 !!!there are probably better solutions for this!!! 🙅
+        await Room.get(req.body.roomId);
+        
+        const track = new Track(req.body);
+        await track.save();
+        
+        res.status(200).send('👌');
     } catch(ex) {
         next(ex);
     }
