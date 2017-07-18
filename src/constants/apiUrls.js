@@ -1,5 +1,5 @@
-const CAMPFIRE_SPOTIFY_CLIENT_ID = process.env.CAMPFIRE_SPOTIFY_CLIENT_ID;
-const CAMPFIRE_BASE_URL = process.env.CAMPFIRE_BASE_URL;
+const CAMPFIRE_SPOTIFY_CLIENT_ID = process.env.RAZZLE_CAMPFIRE_SPOTIFY_CLIENT_ID;
+const CAMPFIRE_BASE_URL = process.env.RAZZLE_CAMPFIRE_BASE_URL;
 const SPOTIFY_BASE_URL = 'https://api.spotify.com'; 
 const SPOTIFY_ACCOUNTS_URL = 'https://accounts.spotify.com';
 

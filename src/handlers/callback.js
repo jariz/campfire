@@ -4,7 +4,7 @@ import throwIfNotOK from '../services/throwIfNotOK';
 import { stringify as toQuery } from 'querystring';
 import jwt from 'jsonwebtoken';
 
-export default async (app, req, res, next) => {
+export default async (req, res, next) => {
     try {
         req.checkQuery('code', 'Invalid code').notEmpty();
         
@@ -28,8 +28,8 @@ export default async (app, req, res, next) => {
                 grant_type: 'authorization_code',
                 code,
                 redirect_uri: 'http://localhost:3000/callback', // todo
-                client_id: process.env.CAMPFIRE_SPOTIFY_CLIENT_ID,
-                client_secret: process.env.CAMPFIRE_SPOTIFY_CLIENT_SECRET
+                client_id: process.env.RAZZLE_CAMPFIRE_SPOTIFY_CLIENT_ID,
+                client_secret: process.env.RAZZLE_CAMPFIRE_SPOTIFY_CLIENT_SECRET
             })
         });
         throwIfNotOK(request);
@@ -62,13 +62,11 @@ export default async (app, req, res, next) => {
         
         const doc = await user.save();
         
-        app.render(req, res, '/callback', {
-            token: jwt.sign({
-                accessToken,
-                userId: doc.id
-            }, process.env.CAMPFIRE_JWT_SECRET)
-        });
-        
+        const token = jwt.sign({
+            accessToken,
+            userId: doc.id
+        }, process.env.RAZZLE_CAMPFIRE_JWT_SECRET);
+        res.redirect('/complete?token=' + token);
     } catch(ex) {
         next(ex);
     }

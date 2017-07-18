@@ -4,9 +4,10 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev": "NODE_ENV=development node index.js",
-        "build": "next build",
-        "start": "NODE_ENV=production node index.js"
+        "start": "razzle start",
+        "build": "razzle build",
+        "test": "razzle test --env=jsdom",
+        "start:prod": "NODE_ENV=production node build/server.js"
     },
     "keywords": [],
     "author": "",
@@ -21,6 +22,7 @@
         "babel-preset-flow": "^6.23.0",
         "babel-preset-stage-0": "^6.22.0",
         "body-parser": "^1.17.2",
+        "chance": "^1.0.10",
         "dotenv-safe": "^4.0.4",
         "dotenv-webpack": "^1.5.2",
         "eslint": "^4.2.0",
@@ -29,17 +31,24 @@
         "express": "^4.15.3",
         "express-validator": "^3.2.0",
         "jsonwebtoken": "^7.4.1",
+        "jwt-decode": "^2.2.0",
         "moniker": "^0.1.2",
-        "next": "^3.0.1-beta.9",
-        "next-redux-wrapper": "^1.1.3",
+        "morgan": "^1.8.2",
+        "query-string": "^4.3.4",
+        "razzle": "^0.7.2",
         "react": "^15.6.1",
         "react-dom": "^15.6.1",
         "react-redux": "^5.0.5",
+        "react-router": "^4.1.1",
+        "react-router-dom": "^4.1.1",
         "redux": "^3.7.1",
         "redux-persist": "^4.8.2",
         "redux-thunk": "^2.2.0",
+        "serialize-javascript": "^1.3.0",
+        "styled-components": "^2.1.1",
         "thinky": "^2.3.8",
         "universal-fetch": "^1.0.0",
-        "uppercamelcase": "^3.0.0"
+        "uppercamelcase": "^3.0.0",
+        "validator": "^8.0.0"
     }
 }

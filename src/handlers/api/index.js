@@ -15,7 +15,7 @@ router.use('/', async (req, res, next) => {
         const { scheme, token } = parse(req.get('authorization'));
         let tokenData;
         if(scheme === 'Bearer') {
-            tokenData = jwt.verify(token, process.env.CAMPFIRE_JWT_SECRET);
+            tokenData = jwt.verify(token, process.env.RAZZLE_CAMPFIRE_JWT_SECRET);
         } else {
             throw new Error('Invalid authorization scheme');
         }
@@ -30,5 +30,6 @@ router.use('/', async (req, res, next) => {
 router.get('/me', me);
 router.get('/refresh', refresh);
 router.post('/room', postRoom);
+router.post('/room/queue', postRoom);
 
 export default router;

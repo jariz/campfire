@@ -19,11 +19,11 @@ export const post = async (req, res, next) => {
     }
 };
 
-export const get = async(req, res, next) => {
+export const get = async (req, res, next) => {
     try {
         const room = await Room
             .get(req.params.roomName)
-            .getJoin({ owner: true });
+            .getJoin({ owner: { _apply: sequence => sequence.pluck(['displayName', 'image', 'id']) } });
         
         res.send(room);
     }

@@ -7,15 +7,12 @@ export const Track = thinky.createModel('Tracks', {
         id: type.string(),
         name: type.string()
     }],
-    coverImage: type.string(),
-    coverColor: type.string(),
     images: [{
         height: type.number(),
         width: type.number(),
         url: type.string()
     }],
     name: type.string(),
-    trackName: type.string(),
     durationMs: type.number()
 });
 

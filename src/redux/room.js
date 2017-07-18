@@ -1,8 +1,11 @@
 // @flow
 
 import throwIfNotOK from '../services/throwIfNotOK';
-import { createRoomUrl } from '../constants/apiUrls';
+import { createRoomUrl, roomUrl, topUrl } from '../constants/apiUrls';
 import { setError } from './error';
+import decode from 'jwt-decode';
+import chance from 'chance';
+
 // state def
 export type IArtist = {
     id: string,
@@ -17,18 +20,16 @@ export type IImage = {
 
 export type ITrack = {
     artists: IArtist[],
-    coverImage: string,
-    coverColor: string,
-    images: ITrack[],
+    images: IImage[],
     name: string,
-    trackName: string,
     durationMs: number
 }
 
 export type RoomState = {
     id: string,
     queue: ITrack[],
-    activeTrack: ITrack
+    activeTrack: ITrack,
+    loaded: false
 };
 
 const defaultState: RoomState = {};
@@ -69,8 +70,24 @@ export const createRoom = (token: string) => async dispatch => {
             }
         });
         throwIfNotOK(resp);
+        return await resp.json();
+    }
+    catch(ex) {
+        dispatch(setError(ex));
+        throw ex;
+    }
+};
+
+export const getRoom = (token: string, room: string) => async dispatch => {
+    try {
+        const resp = await fetch(roomUrl(room), {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        throwIfNotOK(resp);
         const body = await resp.json();
-        // dispatch(setRoom(body));
+        dispatch(setRoom(body));
         return body;
     }
     catch(ex) {
@@ -78,3 +95,32 @@ export const createRoom = (token: string) => async dispatch => {
         throw ex;
     }
 };
+
+export const queueTrack = (token: string) => async dispatch => {
+    
+};
+
+/**
+ * Looks for user's top tracks and queues one at random
+ */
+export const queueRecommendedTrack = (token: string) => async dispatch => {
+    try {
+        const { accessToken } = decode(token);
+        const resp = await fetch(topUrl(), {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+        throwIfNotOK(resp);
+        
+        const body = await resp.json();
+        const number = chance().integer({min: 0, max: body.items.length});
+        console.log(body.items[number])
+        return body;
+    }
+    catch(ex) {
+        dispatch(setError(ex));
+        throw ex;
+    }
+};
+

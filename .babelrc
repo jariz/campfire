@@ -1,9 +1,5 @@
 {
     "presets": [
-        "next/babel",
-        "flow",
-        "es2015",
-        "es2017",
-        "stage-0"
+        "razzle"
     ]
 }
