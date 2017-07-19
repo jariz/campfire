@@ -19,6 +19,7 @@ export default async (req, res, next) => {
         
         const { code } = req.query;
         
+        // todo port to SpotifyWebApi
         let request = await fetch(tokenUrl(), {
             method: 'POST',
             headers: {

@@ -2,19 +2,12 @@ import thinky from '../orm';
 import { type } from 'thinky';
 
 export const Track = thinky.createModel('Tracks', {
-    roomId: type.string(),
-    artists: [{
-        id: type.string(),
-        name: type.string()
-    }],
-    images: [{
-        height: type.number(),
-        width: type.number(),
-        url: type.string()
-    }],
-    spotifyId: type.string(),
-    name: type.string(),
-    durationMs: type.number()
+    roomId: type.string()
+});
+
+export const Vote = thinky.createModel('Votes', {
+    trackId: type.string(),
+    userId: type.string()
 });
 
 export const User = thinky.createModel('Users', {
@@ -28,11 +21,14 @@ export const User = thinky.createModel('Users', {
 
 export const Room = thinky.createModel('Rooms', {
     id: type.string(),
-    activeTrackId: type.string(),
+    playlistId: type.string(),
+    offset: type.number(),
+    isPlaying: type.boolean(),
+    started: type.date(),
+    progressMs: type.number(),
     ownerId: type.string()
 });
 
 Room.belongsTo(User, 'owner', 'ownerId', 'id');
-Room.hasMany(Track, 'queue', 'id', 'roomId');
-Room.hasOne(Track, 'activeTrack', 'activeTrackId', 'id');
-Track.belongsTo(Room, 'activeTrack', 'activeTrackId', 'id');
+Room.hasMany(Track, 'tracks', 'id', 'roomId');
+Track.hasMany(Vote, 'votes', 'id', 'trackId');

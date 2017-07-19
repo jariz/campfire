@@ -1,12 +1,9 @@
-import { Track, Room } from '../../models/index';
+import { Track, Room, Vote } from '../../models/index';
+import SpotifyWebApi from '../../services/SpotifyWebApi';
 
 export default async (req, res, next) => {
     try {
         req.checkBody('roomId', 'Invalid room ID').notEmpty().isAlpha();
-        req.checkBody('artists', 'Invalid artists').isArray().isValidArtistsArray();
-        req.checkBody('images', 'Invalid images').isArray().isValidImagesArray();
-        req.checkBody('name', 'Invalid name').notEmpty();
-        req.checkBody('durationMs', 'Invalid duration').notEmpty().isInt();
         req.checkBody('spotifyId', 'spotifyID missing').isAlphanumeric().notEmpty();
 
         const validation = await req.getValidationResult();
@@ -18,12 +15,28 @@ export default async (req, res, next) => {
             return;
         }
         
+        const { roomId, spotifyId } = req.body;
+        const { userId } = req.tokenData;
+        
         // this will just crash if the room doesn't exist.
         // 🙅 !!!there are probably better solutions for this!!! 🙅
-        await Room.get(req.body.roomId);
+        const { owner, playlistId } = await Room.get(roomId).getJoin({ owner: true });
         
-        const track = new Track(req.body);
+        const track = new Track({
+            spotifyId: spotifyId,
+            roomId
+        });
         await track.save();
+        
+        const vote = new Vote({
+            trackId: spotifyId,
+            userId
+        });
+        await vote.save();
+
+        // pretend we're the owner 😈
+        SpotifyWebApi.setAccessToken(owner.accessToken);
+        await SpotifyWebApi.addTracksToPlaylist(owner.spotifyId, playlistId, [`spotify:track:${spotifyId}`]);
         
         res.status(200).send('👌');
     } catch(ex) {

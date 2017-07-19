@@ -7,22 +7,9 @@ import decode from 'jwt-decode';
 import chance from 'chance';
 
 // state def
-export type IArtist = {
-    id: string,
-    name: string
-};
-
-export type IImage = {
-    width: number,
-    height: number,
-    url: string
-};
-
 export type ITrack = {
-    artists: IArtist[],
-    images: IImage[],
-    name: string,
-    durationMs: number
+    id: string,
+    roomId: string,
 }
 
 export type RoomState = {
@@ -131,15 +118,10 @@ export const queueRecommendedTrack = (token: string, roomId: string) => async (d
         const body = await resp.json();
         const number = chance().integer({min: 0, max: body.items.length});
         const track = body.items[number];
-        const trackNormalized: ITrack = {
-            name: track.name,
-            artists: track.artists.map(({ id, name }) => ({ id, name })),
-            images: track.album.images,
-            durationMs: track.duration_ms,
+        await dispatch(queueTrack(token, {
             spotifyId: track.id,
             roomId
-        };
-        await dispatch(queueTrack(token, trackNormalized));
+        }));
         return body;
     }
     catch(ex) {

@@ -6,10 +6,14 @@ import type { RoomState } from '../../redux/room';
 import { connect } from 'react-redux';
 import isServer from '../../services/isServer';
 
-type RoomProps = {
-    room: RoomState,
+type RoomProps = RoomState & {
     token: string,
-    queueRecommendedTrack: () => void
+    queueRecommendedTrack: () => void,
+    match: {
+        params: {
+            room: string
+        }
+    }
 };
 
 class Room extends Component {
@@ -22,7 +26,7 @@ class Room extends Component {
     render() {
         return (
             <div>
-                {this.props.room.id}
+                {this.props.id}
             </div>
         );
     }
@@ -35,7 +39,7 @@ class Room extends Component {
 }
 
 export default connect(({ room, user: { token } }) => ({
-    room,
+    ...room,
     token
 }), dispatch => ({
     queueRecommendedTrack: (token: string, roomId: string) => dispatch(queueRecommendedTrack(token, roomId)) 
