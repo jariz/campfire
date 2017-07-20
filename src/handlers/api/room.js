@@ -17,6 +17,11 @@ export const post = async (req, res, next) => {
             public: false
         });
         
+        // spotify adds the creator as a follower by default.
+        // unfollow the playlist so it won't show up in the user's playlists.
+        // fun fact: this is basically what spotify calls 'deleting' in it's client. playlists can't be deleted.
+        await SpotifyWebApi.unfollowPlaylist(user.spotifyId, playlistId);
+        
         const room = new Room({
             id,
             ownerId: req.tokenData.userId,
@@ -48,7 +53,7 @@ export const put = async (req, res, next) => {
         });
     }
     
-    
+    // todo
 };
 
 export const get = async (req, res, next) => {

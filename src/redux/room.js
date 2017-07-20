@@ -5,24 +5,27 @@ import { createRoomUrl, queueUrl, roomUrl, topUrl } from '../constants/apiUrls';
 import { setError } from './error';
 import decode from 'jwt-decode';
 import chance from 'chance';
+import type { IProfile } from './user';
 
 // state def
 export type ITrack = {
     id: string,
     roomId: string,
+    spotifyId: string,
+    votes: number
 }
 
 export type RoomState = {
     id: string,
-    queue: ITrack[],
-    activeTrack: ?ITrack,
+    owner: ?IProfile,
+    tracks: ITrack[],
     loaded: false
 };
 
 const defaultState: RoomState = {
     id: '',
-    queue: [],
-    activeTrack: null,
+    owner: null,
+    tracks: [],
     loaded: false
 };
 

@@ -29,7 +29,7 @@ export default async (req, res, next) => {
         await track.save();
         
         const vote = new Vote({
-            trackId: spotifyId,
+            trackId: track.id,
             userId
         });
         await vote.save();
