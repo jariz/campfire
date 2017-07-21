@@ -22,15 +22,17 @@ export default async (req, res, next) => {
         // 🙅 !!!there are probably better solutions for this!!! 🙅
         const { owner, playlistId } = await Room.get(roomId).getJoin({ owner: true });
         
+        const trackData = await SpotifyWebApi.getTrack(spotifyId);
         const track = new Track({
-            spotifyId: spotifyId,
+            spotifyId,
+            durationMs: trackData.body.duration_ms,
             roomId
         });
         await track.save();
         
         const vote = new Vote({
             trackId: track.id,
-            userId
+            userId,
         });
         await vote.save();
 

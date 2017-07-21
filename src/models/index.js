@@ -2,7 +2,11 @@ import thinky from '../orm';
 import { type } from 'thinky';
 
 export const Track = thinky.createModel('Tracks', {
-    roomId: type.string()
+    roomId: type.string(),
+    spotifyId: type.string(),
+    started: type.date(),
+    paused: type.date(),
+    durationMs: type.number()
 });
 
 export const Vote = thinky.createModel('Votes', {
@@ -22,10 +26,6 @@ export const User = thinky.createModel('Users', {
 export const Room = thinky.createModel('Rooms', {
     id: type.string(),
     playlistId: type.string(),
-    offset: type.number(),
-    isPlaying: type.boolean(),
-    started: type.date(),
-    progressMs: type.number(),
     ownerId: type.string()
 });
 

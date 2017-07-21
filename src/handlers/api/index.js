@@ -8,7 +8,7 @@ import authMiddleware from '../../authMiddleware';
 const router = Router();
 
 router.post('/room/queue', authMiddleware, queue);
-router.put('/room/:roomName', putRoom);
+router.put('/room', authMiddleware, putRoom);
 router.get('/room/:roomName', getRoom);
 
 // all calls are authenticated from now on

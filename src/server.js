@@ -41,6 +41,7 @@ router.use(expressValidator({
 }));
 
 router.get('/callback', (...args) => callback(...args));
+router.get('/favicon.ico', (req, res) => res.status(404).send(null));
 router.use('/api', api);
 
 router.use(express.static(process.env.RAZZLE_PUBLIC_DIR));
